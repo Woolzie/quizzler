@@ -1,0 +1,19 @@
+volumes:
+  ollama_data:
+services:
+    ollama:
+      build: ./ollama_model
+      container_name: local_ollama
+      restart: unless-stopped
+      ports:
+        - "11434:11434"   # Expose Ollama API port
+      volumes:
+        - type: volume
+          source: ollama_data
+          target: /root/.ollama
+      environment:
+        - MODEL=${MODEL:-qwen3:4b}
+      deploy:
+          resources:
+            limits:
+              memory: 8G
