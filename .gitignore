@@ -1,2 +1,95 @@
 */node_modules/
 */.env
+
+milvus/volumes
+milvus/embedEtcd.yaml
+milvus/user.yaml
+
+#Uploaded resources are kept here
+uploads
+
+# ---- Python (FastAPI services) ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+*.egg-info/
+.eggs/
+*.sqlite3
+*.db
+*.log
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python cache & test
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+coverage/
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ---- Node + React (frontend) ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+.pnpm-lock.yaml
+
+# Build output
+dist/
+build/
+.next/
+out/
+.cache/
+.npm/
+.eslintcache
+.stylelintcache
+
+# React-specific
+*.env.development.local
+*.env.test.local
+*.env.production.local
+*.env.local
+
+# ---- Docker ----
+*.pid
+*.seed
+*.pid.lock
+docker-compose.override.yml
+# Ignore volumes if mounted locally
+volumes/
+data/
+
+# ---- Environment / Config ----
+.env
+.env.*
+!.env.example   # keep example config
+
+# ---- OS Files ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Editors / IDE ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*.iml
+
+# ---- Misc ----
+logs/
+temp/
+uploads/
+uploads/        # media uploads (optional, if stored locally)
