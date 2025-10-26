@@ -9,11 +9,4 @@ app = FastAPI(
 db.create_tables()
 
 app.include_router(api_router, prefix=config.settings.api_v1_str)
-
-@app.get("/")
-def greet(name:Annotated[str | None, Query()] = None):
-    if name is not None:
-        return {"message": f"hello!, {name}"}
-    
-    return {"message": "hello!, world"}
         
