@@ -8,14 +8,14 @@ from jwt.exceptions import InvalidTokenError
 from pydantic import ValidationError
 from fastapi import HTTPException, status
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{config.settings.api_v1_str}/login/access-token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{config.settings.api_v1_str}/login/")
 TokenDep = Annotated[str, Depends(oauth2_scheme)]
 SessionDep = Annotated[Session, Depends(get_session)]
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:
     try:
         decoded_token = security.get_token_payload(token)
-    except (InvalidTokenError, ValidationError):
+    except (InvalidTokenError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",

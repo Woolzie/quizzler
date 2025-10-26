@@ -1,4 +1,4 @@
-from models import SuccessfulResponse
+from models import SuccessFulResponse
 from models import User, UserCreate, UserPublic, roles
 from fastapi import APIRouter, HTTPException, status, Depends, UploadFile, Query, Path
 from api.dependencies import CurrentAdmin, SessionDep, get_current_admin
@@ -14,7 +14,13 @@ admin_router = APIRouter(
     tags=["Admin"],
 )
 
-@admin_router.post("/create_student", dependencies=[Depends(get_current_admin)], response_model=UserPublic)
+# this one is yet to be implemented
+@admin_router.post("/create_department/", dependencies=[Depends(get_current_admin)])
+def create_department():
+    """Takes the department detail and creates a new one in DB"""
+# 
+
+@admin_router.post("/create_student/", dependencies=[Depends(get_current_admin)], response_model=UserPublic)
 def create_student(new_student: UserCreate, session: SessionDep):
     """
     Creates a single student record in the DB.
@@ -22,8 +28,7 @@ def create_student(new_student: UserCreate, session: SessionDep):
     Takes a UserCreate model as the body parameter
     """
     
-    student_with_email = student.get_student_by_email(session, new_student.user_email)
-    
+    student_with_email = student.get_student_by_email(session=session, student_email=new_student.user_email)
     if student_with_email:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Student with the given email already exists")
     
@@ -31,7 +36,7 @@ def create_student(new_student: UserCreate, session: SessionDep):
     
     return created_student
 
-@admin_router.post("/create_students", dependencies=[Depends(get_current_admin)])
+@admin_router.post("/create_students/", dependencies=[Depends(get_current_admin)])
 def create_students_using_csv_file(students_file: UploadFile, session: SessionDep):
     """
     Creates students in bulk
@@ -42,18 +47,16 @@ def create_students_using_csv_file(students_file: UploadFile, session: SessionDe
     new_students = read_csv_files.get_students_from_csv(students_file.file)
 
     students_before_commit = session.scalar(select(func.count()).select_from(User).where(User.user_role == roles("student")))
-    
     session.add_all(new_students)
     session.commit()
-    
     students_after_commit = session.scalar(select(func.count()).select_from(User))
     
-    if (students_after_commit - students_before_commit) != len(new_students):
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, details="Something went wrong while adding new students!")
+    if (students_after_commit - students_before_commit) <= 0:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong while adding new students!")
     
-    return SuccessfulResponse(status_code=status.HTTP_201_CREATED, response_message="New students added to the Database")
+    return SuccessFulResponse(status_code=status.HTTP_201_CREATED, response_message="New students added to the Database")
    
-@admin_router.post("/create_faculty", dependencies=[Depends(get_current_admin)], response_model=UserPublic)
+@admin_router.post("/create_faculty/", dependencies=[Depends(get_current_admin)], response_model=UserPublic)
 def create_faculty(new_faculty: UserCreate, session: SessionDep):
     """
     Creates a single Faculty record in the DB.
@@ -61,16 +64,15 @@ def create_faculty(new_faculty: UserCreate, session: SessionDep):
     Takes a UserCreate model as the body parameter
     """
     
-    student_with_email = faculty.get_faculty_by_email(session, new_faculty.user_email)
-    
-    if student_with_email:
+    faculty_with_email = faculty.get_faculty_by_email(session=session, faculty_email=new_faculty.user_email)
+    if faculty_with_email:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Student with the given email already exists")
     
-    created_faculty = faculty.create_new_faculty_in_db(session=session, new_student=new_faculty)
+    created_faculty = faculty.create_new_faculty_in_db(session=session, new_faculty=new_faculty)
     
     return created_faculty
 
-@admin_router.post("/create_faculties", dependencies=[Depends(get_current_admin)])
+@admin_router.post("/create_faculties/", dependencies=[Depends(get_current_admin)])
 def create_faculties_using_csv_file(faculties_file: UploadFile, session: SessionDep):
     """
     Creates Faculties in bulk
@@ -81,16 +83,20 @@ def create_faculties_using_csv_file(faculties_file: UploadFile, session: Session
     new_faculties = read_csv_files.get_faculties_from_csv(faculties_file.file)
     
     faculties_before_commit = session.scalar(select(func.count()).select_from(User).where(User.user_role == roles("teacher")))
-    
     session.add_all(new_faculties)
     session.commit()
-    
     faculties_after_commit = session.scalar(select(func.count()).select_from(User).where(User.user_role == roles("teacher")))
     
-    if (faculties_after_commit - faculties_before_commit) != len(new_faculties):
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, details="Something went wrong while adding new students!")
+    if (faculties_after_commit - faculties_before_commit) <= 0:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Something went wrong while adding new students!")
     
-    return SuccessfulResponse(status_code=status.HTTP_201_CREATED, response_message="New students added to the Database")
+    return SuccessFulResponse(status_code=status.HTTP_201_CREATED, response_message="New Faculties added to the Database")
+
+# yet to be implemented
+@admin_router.get("/get_departments/")
+def get_departments():
+    return
+# 
 
 @admin_router.get("/get_faculty/", dependencies=[Depends(get_current_admin)], response_model=List[UserPublic])
 def get_faculties(
@@ -137,6 +143,12 @@ def get_students(
 # Delete student has to be changed for using id rather than register no
 # register no should be a search parameter not for delete
 
+# yet to be implemented
+@admin_router.delete("delete/department/{department_id}")
+def delete_department():
+    return
+# 
+
 @admin_router.delete("/delete/student/{student_register_no}", dependencies=[Depends(get_current_admin)])
 def delete_student(session: SessionDep, student_register_no: Annotated[str, Path(max_length=10)]):
     """Deletes Student record by using the given register number"""
@@ -146,7 +158,7 @@ def delete_student(session: SessionDep, student_register_no: Annotated[str, Path
     except (ApiError.DatabaseException) as db_error:
         raise HTTPException(status_code=db_error.code, detail=db_error.message)
     
-    return SuccessfulResponse(status_code=status.HTTP_202_ACCEPTED, message="Deleted the student successfully")
+    return SuccessFulResponse(status_code=status.HTTP_202_ACCEPTED, response_message="Deleted the student successfully")
 
 @admin_router.delete("/delete/faculty/{faculty_register_number}", dependencies=[Depends(get_current_admin)])
 def delete_faculty(session: SessionDep, faculty_register_number: Annotated[str, Path(max_length=10)]):
@@ -157,7 +169,7 @@ def delete_faculty(session: SessionDep, faculty_register_number: Annotated[str, 
     except (ApiError.DatabaseException) as db_error:
         raise HTTPException(status_code=db_error.code, detail=db_error.message)
     
-    return SuccessfulResponse(status_code=status.HTTP_202_ACCEPTED, message="Deleted the student successfully")
+    return SuccessFulResponse(status_code=status.HTTP_202_ACCEPTED, response_message="Deleted the Faculty successfully")
 
 # TODO: In the future, 
 # add features to search faculties/students based on register number and some other attributes

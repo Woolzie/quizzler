@@ -18,7 +18,8 @@ def login_user(session: SessionDep, form_data: Annotated[OAuth2PasswordRequestFo
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Invalid email or password")
     
     access_token_expiration_delta = timedelta(minutes=config.settings.access_token_expire_minutes)
-    token_payload = TokenPayload(valid_user.user_id).model_dump()
+
+    token_payload = valid_user.user_id
         
     return Token(
         access_token = security.create_access_token(token_payload, access_token_expiration_delta)

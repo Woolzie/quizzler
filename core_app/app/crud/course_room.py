@@ -74,6 +74,6 @@ def delete_course_room_by_id(*, session: Session, course: CourseRoomApi):
         Dependencies to be taken care of: Quiz room, Materials, Assignment...
     """
     
-    delete_stmt = delete(CourseRoom).where(CourseRoomDelete.course_room_id == course.course_room_id)
+    delete_stmt = delete(CourseRoom).where(CourseRoom.course_room_id == course.course_room_id)
     session.exec(delete_stmt)
     session.commit()
