@@ -1,4 +1,9 @@
-import { TeacherSignup } from "@/components/AuthPages";
+import AuthLayout from "@/components/AuthPages";
+import { auth, users } from "@/lib/constants";
 export default function Page() {
-	return <TeacherSignup />;
+    return (
+        <>
+            <AuthLayout type={auth.signup} user={users.teachers} />;
+        </>
+    );
 }

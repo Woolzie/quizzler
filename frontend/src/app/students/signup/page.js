@@ -1,4 +1,9 @@
-import { StudentSignup } from "@/components/AuthPages";
+import AuthLayout from "@/components/AuthPages";
+import { auth, users } from "@/lib/constants";
 export default function Page() {
-	return <StudentSignup />;
+    return (
+        <>
+            <AuthLayout type={auth.signup} user={users.students} />
+        </>
+    );
 }

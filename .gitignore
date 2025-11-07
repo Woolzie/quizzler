@@ -93,3 +93,5 @@ logs/
 temp/
 uploads/
 uploads/        # media uploads (optional, if stored locally)
+*biome.json
+*.gitignore
