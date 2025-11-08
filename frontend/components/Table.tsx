@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from "react";
 
 import { usePapaParse } from "react-papaparse";
-interface ITable {
+interface IShowTable {
     serverData: any;
     currentView: number;
 }
 
-export const Table = ({ serverData, currentView }: ITable) => {
-    const [tableData, setTableData] = useState(null);
+export const ShowTable = ({ serverData, currentView }: ITable) => {
+    const [tableData, setTableData] = useState("");
     const [loading, setLoading] = useState(true);
 
     const { jsonToCSV } = usePapaParse();
@@ -16,20 +16,19 @@ export const Table = ({ serverData, currentView }: ITable) => {
     //
 
     useEffect(() => {
-        console.log(`${serverData}`);
-
         const handleJsonToCSV = (data) => {
-            const results = jsonToCSV(data);
-            const rows = results.split("\r");
-            const arr: Array<string> = [];
-            for (const row of rows) {
-                console.log(row.split(","));
-                arr.push(row.split(","));
+            console.log(`${data}`);
+            if (data) {
+                const results = jsonToCSV(data);
+                const rows = results.split("\r");
+                const arr: Array<string> = [];
+                for (const row of rows) {
+                    arr.push(row.split(","));
+                }
+                return arr;
             }
-            return arr;
         };
-        // ensures its not null
-        if (serverData[1]) {
+        if (serverData) {
             setTableData((tableData) =>
                 handleJsonToCSV(serverData[currentView])
             );
@@ -41,9 +40,17 @@ export const Table = ({ serverData, currentView }: ITable) => {
 
     return (
         <div className="grid">
-            {loading
-                ? tableData[currentView].map((data) => <p>data</p>)
-                : <p>meow</p>}
         </div>
     );
+};
+const Table = () => {
+    return (
+        <div className="grid">
+        </div>
+    );
+};
+
+const Loading = () => {
+    //TODO: add some loading animation
+    return <p>Loading...</p>;
 };
