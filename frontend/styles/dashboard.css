@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@import "./globals.css";
+
+.card {
+    @apply bg-card-background border-4 border-card-border text-4xl rounded-3xl;
+
+    h1 {
+        @apply bg-card-heading w-full h-fit text-center rounded-t-2xl p-3;
+    }
+
+    p {
+        @apply text-lg text-center;
+    }
+
+    button {
+        @apply bg-primary-button m-5 p-5 text-xl rounded-3xl;
+    }
+}

@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+:root {
+    --background: #F9FAFB;
+    --navbar: #aaa;
+    --navitems: #000;
+    --text: #000;
+    --secondary-button: #5FBFF9;
+    --secondary-button-hover: #2A4D9B;
+    --primary-button: #FFD166;
+    --primary-button-hover: #FFD766;
+    --card-background: #FFFFFF;
+    --card-border: #444;
+    --card-heading: #444;
+    --input-border: #fff;
+    --links: #2A4D9B;
+}
+
+@theme {
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+
+    --color-background: var(--background);
+    --color-text: var(--text);
+    --color-navitems: var(--navitems);
+    --color-navbar: var(--navbar);
+    --color-secondary-button: var(--secondary-button);
+    --color-primary-button: var(--secondary-button-hover);
+    --color-primary-button: var(--primary-button);
+    --color-primary-button-hover: var(--primary-button-hover);
+    --color-card-background: var(--card-background);
+    --color-card-border: var(--card-border);
+    --color-card-heading: var(--card-heading);
+    --color-input-border: var(--input-border);
+    --color-links: var(--links);
+}
+
+
+body {
+    background: var(--background);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.heading {
+    @apply absolute text-center mt-10 text-4xl font-bold w-full
+}

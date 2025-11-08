@@ -1,0 +1,6 @@
+@reference "tailwindcss"
+
+
+.menu-icon {
+    @apply bg-[url('./../public/menu.svg')] bg-no-repeat bg-center
+}
