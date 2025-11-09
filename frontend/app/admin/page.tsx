@@ -3,53 +3,37 @@ import { ViewButton } from "@/components/ViewButton";
 import { useEffect, useState } from "react";
 import CSVReader from "../../components/Csv.tsx";
 import { ShowTable } from "@/components/Table.tsx";
+import { adminGetRequest } from "../../lib/getAdmin.ts";
+import { handleJsonToCSV } from "@/lib/convert.ts";
+import { usePapaParse } from "react-papaparse";
 
 export default function AdminPage() {
     const [currentView, setView] = useState(0);
     const [inputCsv, setInputCsv] = useState(null);
-    // array of json data from all the users get requests
-    const [serverData, setServerData] = useState(null);
+    // this has to be in csv format
+    const [serverData, setServerData] = useState(new Array(3).fill(null));
+    const { jsonToCSV } = usePapaParse();
 
     useEffect(() => {
-        const apis = ["students", "faculty", "departments"];
-        const token =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjI2NDY0MTQsInBheWxvYWQiOiIwNWFjODU5NC1mOTY2LTRhODQtODE1Ny1hMTZmYWRhNTIzY2UifQ.7HuFwrKKJxMQwi57yYSOaZTnqgCmD1NvijYg2LXQvzI";
-        //TODO: find a more elegant solution to make the promise wait for the forEach loop to finish executing
-
-        const createPromises = new Promise((resolve, reject) => {
-            //ensure this runs before the promise.all
-            const promises = new Array(3).fill(null);
-            apis.forEach(async (api, index) => {
-                const url = `http://localhost:8000/api/v1/admin/get_${api}/`;
-                const fetchResponse = await fetch(url, {
-                    method: "GET",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                        "Access-Control-Allow-Origin": "*",
-                    },
+        function getTableValues() {
+            if (serverData[currentView] === null) {
+                const res = adminGetRequest(currentView);
+                res.then((value) => {
+                    const csvData = handleJsonToCSV(jsonToCSV, value);
+                    serverData[currentView] = csvData;
+                    setServerData((serverData) => [...serverData]);
                 });
-                const res = fetchResponse.json();
-                promises[index] = res;
-                // this is retarded
-                //TODO: once the rest arent null, update serverData aswell
-                if (promises[currentView]) resolve(promises);
-            });
-        });
+                console.log(serverData);
+            }
+        }
+        getTableValues();
+    }, [currentView]);
 
-        createPromises.then((promises) => Promise.all(promises)).then((
-            results,
-        ) => {
-            console.log(results);
-            setServerData((serverData) => results);
-        });
+    useEffect(() => {
         if (inputCsv) {
             // hit the create_{api} endpoints
         }
     }, [inputCsv]);
-
-    //BUG: no dependency list or serverData in dependency list causes it to call itself a billion times
 
     return (
         <div className="w-screen h-full flex items-center flex-col justify-between">

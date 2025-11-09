@@ -7,9 +7,9 @@ type IViewButton = {
 };
 
 export const ViewButton = ({ currentView, setView }: IViewButton) => {
-    const handleClick = (e: React.MouseEventHandler<HTMLButtonElement>) => {
-        e.preventDefault();
-        setView(Number(e.currentTarget.value));
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const value = Number(e.currentTarget.value);
+        setView(value);
     };
     return (
         <div className="w-[40%] flex justify-center m-4 ">

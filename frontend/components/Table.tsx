@@ -1,56 +1,65 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { handleJsonToCSV } from "../lib/convert.ts";
+import { Error } from "./Error.tsx";
+import { Loading } from "./Loading.tsx";
 
-import { usePapaParse } from "react-papaparse";
-interface IShowTable {
-    serverData: any;
+interface ShowTableType {
+    serverData: Array<Array<string>>;
     currentView: number;
 }
 
-export const ShowTable = ({ serverData, currentView }: ITable) => {
-    const [tableData, setTableData] = useState("");
+export const ShowTable = ({ serverData, currentView }: ShowTableType) => {
     const [loading, setLoading] = useState(true);
-
-    const { jsonToCSV } = usePapaParse();
-    //needs to be a promise around serverData
-    //
+    const [error, setError] = useState(false);
 
     useEffect(() => {
-        const handleJsonToCSV = (data) => {
-            console.log(`${data}`);
-            if (data) {
-                const results = jsonToCSV(data);
-                const rows = results.split("\r");
-                const arr: Array<string> = [];
-                for (const row of rows) {
-                    arr.push(row.split(","));
+        const getServerData = new Promise((resolve, reject) => {
+            let times = 0;
+            setInterval(() => {
+                times += 1;
+                if (times > 30) reject();
+                if (serverData[currentView] !== null) {
+                    setLoading(false);
+                    resolve(serverData[currentView]);
                 }
-                return arr;
-            }
-        };
-        if (serverData) {
-            setTableData((tableData) =>
-                handleJsonToCSV(serverData[currentView])
-            );
+            }, 100);
+        });
+
+        if (serverData[currentView] !== null) setLoading(false);
+        else {
+            setLoading(true);
+            getServerData.catch(() => {
+                setError(true);
+            });
         }
-    }, [serverData]);
+    }, [currentView]);
     useEffect(() => {
-        if (tableData && tableData[currentView]) setLoading(false);
-    }, [tableData]);
+        console.log("moew");
+        setLoading(true);
+    }, [currentView]);
 
     return (
-        <div className="grid">
-        </div>
-    );
-};
-const Table = () => {
-    return (
-        <div className="grid">
-        </div>
+        <>
+            {error ? <Error /> : loading ? <Loading /> : (
+                <Table
+                    serverData={serverData[currentView]}
+                />
+            )}
+        </>
     );
 };
 
-const Loading = () => {
-    //TODO: add some loading animation
-    return <p>Loading...</p>;
+interface TableType {
+    serverData: Array<string>;
+}
+const Table = ({ serverData }: TableType) => {
+    const [cols, setCols] = useState(1);
+    return (
+        <div className={`w-[45%] grid grid-cols-${cols} gap-4`}>
+            {serverData.map((row) =>
+                row.map((val) => <div key={crypto.randomUUID()}>{val}</div>)
+            )}
+        </div>
+    );
 };
