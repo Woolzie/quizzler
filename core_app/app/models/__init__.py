@@ -3,7 +3,7 @@ from sqlmodel import SQLModel
 # from .ChatHistory import ChatHistory
 # from .ChatMessage import ChatMessage
 from .CourseRoom import CourseRoom, CourseRoomBase, CourseRoomDetails, CourseRoomApi
-from .Department import Department
+from .Department import Department, DepartmentCreate
 from .EnrolledCourse import EnrolledCourse
 from .Question import Question
 from .QuestionPool import QuestionPool

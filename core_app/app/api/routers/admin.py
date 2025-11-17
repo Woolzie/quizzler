@@ -1,25 +1,26 @@
 from models import SuccessFulResponse
-from models import User, UserCreate, UserPublic, roles
+from models import User, UserCreate, UserPublic, roles, DepartmentCreate
 from fastapi import APIRouter, HTTPException, status, Depends, UploadFile, Query, Path
 from api.dependencies import CurrentAdmin, SessionDep, get_current_admin
 from typing import Annotated, List
-from crud import student, faculty
+from crud import student, faculty, department
 from utils import read_csv_files, ApiError
 from sqlmodel import select, func
 from pydantic import ValidationError
-
 
 admin_router = APIRouter(
     prefix="/admin",
     tags=["Admin"],
 )
 
-# this one is yet to be implemented
 @admin_router.post("/create_department/", dependencies=[Depends(get_current_admin)])
-def create_department():
+def create_department(department_info: DepartmentCreate, session: SessionDep):
     """Takes the department detail and creates a new one in DB"""
-# 
-
+    
+    new_created_department = department.create_department(session=session, department_info=department_info)
+    
+    return new_created_department
+    
 @admin_router.post("/create_student/", dependencies=[Depends(get_current_admin)], response_model=UserPublic)
 def create_student(new_student: UserCreate, session: SessionDep):
     """
@@ -92,11 +93,11 @@ def create_faculties_using_csv_file(faculties_file: UploadFile, session: Session
     
     return SuccessFulResponse(status_code=status.HTTP_201_CREATED, response_message="New Faculties added to the Database")
 
-# yet to be implemented
-@admin_router.get("/get_departments/")
-def get_departments():
-    return
-# 
+@admin_router.get("/get_department/{department_id}", dependencies=[Depends(get_current_admin)])
+def get_departments(department_id: int, session: SessionDep):
+    department_obj = department.get_department(session=session, department_id=department_id)
+    
+    return department_obj
 
 @admin_router.get("/get_faculty/", dependencies=[Depends(get_current_admin)], response_model=List[UserPublic])
 def get_faculties(
@@ -140,14 +141,14 @@ def get_students(
     
     return list_of_students
 
+@admin_router.delete("/delete_department/{department_id}", dependencies=[Depends(get_current_admin)], response_model=SuccessFulResponse)
+def delete_department(department_id: int, session: SessionDep):
+    department.delete_department(session=session, department_id=department_id)
+    
+    return SuccessFulResponse(status_code=status.HTTP_204_NO_CONTENT, response_message="Deleted the department successfully")
+
 # Delete student has to be changed for using id rather than register no
 # register no should be a search parameter not for delete
-
-# yet to be implemented
-@admin_router.delete("delete/department/{department_id}")
-def delete_department():
-    return
-# 
 
 @admin_router.delete("/delete/student/{student_register_no}", dependencies=[Depends(get_current_admin)])
 def delete_student(session: SessionDep, student_register_no: Annotated[str, Path(max_length=10)]):
