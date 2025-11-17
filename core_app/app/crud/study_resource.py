@@ -23,7 +23,7 @@ async def create_study_resources(*, session: Session, files: List[UploadFile], q
     ]
     
     session.add_all(resources)
-    session.commit
+    session.commit()
     
     return resources
 
