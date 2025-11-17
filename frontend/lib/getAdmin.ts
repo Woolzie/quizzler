@@ -1,6 +1,6 @@
 const apis = ["students", "faculty", "departments"];
 const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjI3NTU0NjAsInBheWxvYWQiOiIwNWFjODU5NC1mOTY2LTRhODQtODE1Ny1hMTZmYWRhNTIzY2UifQ.UjYgaXJJkZPEM9anr1Z8EGUaL8ZkjDE0vuRQwweH-uk";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjMyOTY1ODgsInBheWxvYWQiOiIwNWFjODU5NC1mOTY2LTRhODQtODE1Ny1hMTZmYWRhNTIzY2UifQ.ulIyk6dBLD42JcLYjecBKPnKM4lTRUGsWDsErrv_060";
 
 async function adminGetRequest(currentView) {
     const url = `http://localhost:8000/api/v1/admin/get_${apis[currentView]}/`;

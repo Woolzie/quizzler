@@ -24,12 +24,12 @@ export const ViewButton = ({ currentView, setView }: IViewButton) => {
                         type="button"
                         key={crypto.randomUUID()}
                         value={index}
-                        className="bg-pink-100 p-4 flex-1"
+                        className="bg-slate-500 p-4 flex-1"
                         onClick={handleClick}
                         style={{
                             borderColor: "inherit",
                             backgroundColor: currentView === index
-                                ? "yellow"
+                                ? "pink"
                                 : "",
                             borderRight: index === 1 ? "1px solid" : "",
                             borderLeft: index === 1 ? "1px solid" : "",

@@ -1,11 +1,29 @@
-// import "@/styles/navbar.css";
+"use client";
+import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
+import "@/styles/navbar.css";
+
 const Navbar = () => {
+    const [lightMode, setLightMode] = useState<boolean>(
+        null!,
+    );
+    useEffect(() => {
+        if (lightMode === null) {
+            setLightMode(document.body.classList.contains("dark"));
+        }
+    });
+
     return (
-        <div className="w-screen flex justify-between bg-navbar p-2">
-            {/*TODO: this could be the theme change button */}
-            <div className=""></div>
-            <div className="p-1 bg-navitems rounded-full">
-                <button className="p-3 menu-icon "></button>
+        <div className="w-screen h-[5vh] flex justify-between navbar items-center ">
+            <div className=""></div> {/* throw away  */}
+            <div
+                className="flex justify-center items-center text-white bg-black  size-fit  rounded-full mr-4 "
+                onClick={() => {
+                    document.body.classList.toggle("dark");
+                    setLightMode(!lightMode);
+                }}
+            >
+                <div className="p-2">{lightMode ? <Sun /> : <Moon />}</div>
             </div>
         </div>
     );

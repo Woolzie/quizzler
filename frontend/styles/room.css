@@ -1,0 +1,6 @@
+@import "./globals.css";
+@import "tailwindcss";
+
+.room-bg {
+    background-color: var(--chat-bg);
+}
