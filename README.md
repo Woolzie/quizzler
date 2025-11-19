@@ -24,7 +24,8 @@ Backend
      ```sh
      source env/bin/activate
      ```
-     the command above depends on the shell and os you are using
+     the command above depends on the shell and os you are using,
+   
    for window:
    
      ```sh
